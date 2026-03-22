@@ -3,7 +3,6 @@ const cors = require('cors');
 const { analyzeIntent } = require('./classifier');
 const { extractEntities, performNetworkTelemetry, verifyEndpointThreat } = require('./nlp');
 const { fetchDarkWebData } = require('./crawler');
-const { fetchThreatNews, fetchArticleContent } = require('./news_fetcher');
 
 const app = express();
 
@@ -62,20 +61,6 @@ app.post('/api/verify', (req, res) => {
 
     const verificationResult = verifyEndpointThreat(url, fileName);
     res.json(verificationResult);
-});
-
-// API: Fetch Live Threat News from Google
-app.get('/api/threat-news', async (req, res) => {
-    const news = await fetchThreatNews();
-    res.json(news);
-});
-
-// API: Proxy News Article Content (Read within System)
-app.post('/api/proxy-report', async (req, res) => {
-    const { url } = req.body;
-    if (!url) return res.status(400).json({ error: "No URL provided" });
-    const content = await fetchArticleContent(url);
-    res.json({ content });
 });
 
 const PORT = 5000;
