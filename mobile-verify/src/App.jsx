@@ -3,7 +3,7 @@ import { ShieldCheck, Link, Upload, AlertCircle, CheckCircle, ShieldAlert, Image
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 function App() {
   const [urlInput, setUrlInput] = useState('');
