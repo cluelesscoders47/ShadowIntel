@@ -9,11 +9,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Root Health Check
-app.get('/', (req, res) => {
-    res.send("ShadowIntel AI Core Engine: LIVE");
-});
-
 // API: Core Dark Web Target Scan
 app.post('/api/scan', async (req, res) => {
     const { targetUrl } = req.body;
