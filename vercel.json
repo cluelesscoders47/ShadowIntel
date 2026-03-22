@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd web-dashboard && npm run build",
+  "buildCommand": "npm run build:web",
   "outputDirectory": "web-dashboard/dist",
   "framework": "vite",
   "rewrites": [
