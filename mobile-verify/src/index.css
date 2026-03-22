@@ -38,8 +38,10 @@ body {
 
 /* Mobile Simulator Container */
 .mobile-container {
-  width: 390px;
-  height: 844px;
+  width: 100%;
+  max-width: 450px;
+  height: 100vh;
+  max-height: 900px;
   background-color: var(--bg-color);
   border-radius: 40px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -50,7 +52,7 @@ body {
   flex-direction: column;
 }
 
-/* Notch Simulator */
+/* Notch Simulator - Only show on large screens */
 .mobile-container::before {
   content: '';
   position: absolute;
@@ -63,6 +65,22 @@ body {
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
   z-index: 100;
+}
+
+@media (max-width: 500px) {
+  body {
+    background-color: var(--bg-color);
+  }
+  .mobile-container {
+    max-width: 100%;
+    height: 100vh;
+    max-height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+  .mobile-container::before {
+    display: none;
+  }
 }
 
 .header {
