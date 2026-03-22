@@ -11,6 +11,7 @@ function App() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
   const [showWiki, setShowWiki] = useState(false);
+  const [customApi, setCustomApi] = useState(API_URL);
 
   const handleScan = async (e) => {
     e.preventDefault();
@@ -20,11 +21,11 @@ function App() {
     setScanResult(null);
 
     try {
-        const response = await axios.post(`${API_URL}/scan`, { targetUrl });
+        const response = await axios.post(`${customApi}/scan`, { targetUrl });
         setScanResult(response.data);
     } catch (error) {
         console.error(error);
-        alert("Failed to connect to Local AI Engine.");
+        alert(`Failed to connect to Local AI Engine at ${customApi}`);
     } finally {
         setIsScanning(false);
     }
@@ -36,15 +37,27 @@ function App() {
         <div className="logo">
           <Shield size={28} /> <span>ShadowIntel</span>
         </div>
-        <div style={{ display: 'flex', gap: '30px', fontWeight: 500 }}>
-          <button 
-            onClick={() => setShowWiki(!showWiki)}
-            style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem' }}
-          >
-            <BookOpen size={18} /> {showWiki ? 'Close Wiki' : 'Open Intelligence Wiki'}
-          </button>
-          <div style={{ color: '#047857', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Activity size={18} /> API ONLINE
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          {/* API Endpoint Config for Remote Access */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#f1f5f9', padding: '5px 12px', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
+             <Activity size={14} color="#047857" />
+             <input 
+                type="text" 
+                value={customApi} 
+                onChange={(e) => setCustomApi(e.target.value)}
+                style={{ background: 'none', border: 'none', fontSize: '0.75rem', color: 'var(--text-secondary)', width: '150px', outline: 'none', fontFamily: 'var(--font-mono)' }}
+                placeholder="AI Engine URL..."
+             />
+          </div>
+
+          <div style={{ display: 'flex', gap: '20px', fontWeight: 500 }}>
+            <button 
+                onClick={() => setShowWiki(!showWiki)}
+                style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}
+            >
+                <BookOpen size={18} /> {showWiki ? 'Close Wiki' : 'Wiki'}
+            </button>
           </div>
         </div>
       </nav>
