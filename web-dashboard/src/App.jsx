@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import EducationCenter from './components/EducationCenter';
 
-const API_URL = '/api';
+const API_URL = window.location.hostname.includes('vercel.app') ? '/api' : `http://${window.location.hostname}:5000/api`;
 
 function App() {
   const [targetUrl, setTargetUrl] = useState('');

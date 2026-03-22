@@ -3,7 +3,7 @@ import { ShieldCheck, Link, Upload, AlertCircle, CheckCircle, ShieldAlert, Image
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API_URL = '/api';
+const API_URL = window.location.hostname.includes('vercel.app') ? '/api' : `http://${window.location.hostname}:5000/api`;
 
 function App() {
   const [urlInput, setUrlInput] = useState('');
