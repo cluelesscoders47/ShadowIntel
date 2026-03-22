@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Shield, Search, Cpu, Bell, AlertTriangle, Play, BookOpen, ArrowLeft } from 'lucide-react';
+import { Shield, Search, Cpu, Bell, AlertTriangle, Play, BookOpen, ArrowLeft, ExternalLink, XCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import EducationCenter from './components/EducationCenter';
@@ -11,6 +11,21 @@ function Scanner() {
   const [targetUrl, setTargetUrl] = useState('');
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
+  const [news, setNews] = useState([]);
+  const [activeReport, setActiveReport] = useState(null);
+  const [isFetchingReport, setIsFetchingReport] = useState(false);
+
+  useEffect(() => {
+    const loadNews = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/threat-news`);
+            setNews(response.data);
+        } catch (e) {
+            console.error("News Load Failed");
+        }
+    };
+    loadNews();
+  }, []);
 
   const handleScan = async (e) => {
     e.preventDefault();
@@ -30,8 +45,66 @@ function Scanner() {
     }
   };
 
+  const openReport = async (item) => {
+    setIsFetchingReport(true);
+    setActiveReport({ ...item, content: "Securing connection... decrypting intelligence node... Please wait." });
+    try {
+        const response = await axios.post(`${API_URL}/proxy-report`, { url: item.link });
+        setActiveReport({ ...item, content: response.data.content });
+    } catch (e) {
+        setActiveReport({ ...item, content: "Access Denied. Node offline or unreachable." });
+    } finally {
+        setIsFetchingReport(false);
+    }
+  };
+
   return (
     <motion.div key="dash" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+      
+      {/* Search Bar Overlay - Report Viewer Modal */}
+      <AnimatePresence>
+          {activeReport && (
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }} 
+                style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
+              >
+                  <motion.div 
+                    initial={{ scale: 0.9, y: 20 }} 
+                    animate={{ scale: 1, y: 0 }} 
+                    className="glass-panel" 
+                    style={{ maxWidth: '800px', width: '100%', maxHeight: '90vh', overflowY: 'auto', position: 'relative', boxShadow: '0 0 50px rgba(220, 38, 38, 0.2)' }}
+                  >
+                      <button 
+                        onClick={() => setActiveReport(null)}
+                        style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', cursor: 'pointer' }}
+                      >
+                        <XCircle size={24} color="var(--accent-red)" />
+                      </button>
+                      
+                      <div style={{ paddingBottom: '20px', borderBottom: '1px solid var(--border-color)', marginBottom: '20px' }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--accent-red)', letterSpacing: '2px' }}>LIVE INTELLIGENCE REPORT</span>
+                          <h2 style={{ marginTop: '5px' }}>{activeReport.title}</h2>
+                          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Source: {new URL(activeReport.link).hostname}</p>
+                      </div>
+
+                      <div style={{ color: 'var(--text-secondary)', lineHeight: '1.8', whiteSpace: 'pre-wrap' }}>
+                          {activeReport.content}
+                      </div>
+                      
+                      {isFetchingReport && (
+                          <div style={{ textAlign: 'center', marginTop: '30px' }}>
+                              <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} style={{ display: 'inline-block' }}>
+                                  <Cpu size={30} color="var(--accent-red)" />
+                              </motion.div>
+                          </div>
+                      )}
+                  </motion.div>
+              </motion.div>
+          )}
+      </AnimatePresence>
+
       {/* Top Analysis Bar */}
       <div className="glass-panel" style={{ marginBottom: '30px' }}>
         <h2 style={{ fontSize: '1.2rem', marginBottom: '10px' }}><Search size={20} /> Deep Web Target Scanner</h2>
@@ -136,24 +209,35 @@ function Scanner() {
             )}
         </div>
 
-        {/* Threat Feed (Static) */}
+        {/* Live Intelligence Feed (Real-Time Scraping) */}
         <div className="glass-panel" style={{ height: 'fit-content' }}>
-          <h2 style={{ fontSize: '1.1rem', marginBottom: '20px' }}><Bell size={20} /> Live Threat Feed</h2>
+          <h2 style={{ fontSize: '1.1rem', marginBottom: '20px' }}>
+            <Bell size={20} /> Live Intelligence Feed
+          </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              <motion.div whileHover={{ x: 5 }} className="threat-alert">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                    <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Corporate Exploit</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>2m ago</span>
+              {news.length > 0 ? news.map((item) => (
+                  <motion.div 
+                    key={item.id} 
+                    whileHover={{ x: 5 }} 
+                    className="threat-alert" 
+                    onClick={() => openReport(item)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                        <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>External Report</span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{item.time}</span>
+                      </div>
+                      <p style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '5px' }}>{item.title}</p>
+                      <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{item.snippet}</p>
+                      <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.75rem', color: 'var(--accent-red)', fontWeight: 600 }}>
+                          <ExternalLink size={12} /> READ INTELLIGENCE REPORT
+                      </div>
+                  </motion.div>
+              )) : (
+                  <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>
+                      Connecting to intelligence nodes...
                   </div>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Detected LockBit discussion mentioning infrastructure vulnerabilities.</p>
-              </motion.div>
-              <motion.div whileHover={{ x: 5 }} className="threat-alert" style={{ borderLeftColor: '#f59e0b', background: '#fffbeb' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                    <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Phishing Kit</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>1hr ago</span>
-                  </div>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>New Office365 credential harvester template sold on forum.</p>
-              </motion.div>
+              )}
           </div>
         </div>
 
