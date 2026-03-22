@@ -83,11 +83,11 @@ function App() {
             </div>
 
             {/* Results Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
+            <div className="main-grid">
               
               {/* Scan Results Panel */}
               <div className="glass-panel">
-                 <h2 style={{ fontSize: '1.1rem', marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
+                 <h2 style={{ fontSize: '1.1rem', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><Cpu size={20} /> AI Target Analysis</div>
                     {scanResult && <span className={`status-badge status-${scanResult.threatLevel}`}>{scanResult.threatLevel} RISK</span>}
                  </h2>
@@ -101,7 +101,7 @@ function App() {
                      </div>
                  ) : scanResult ? (
                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px' }}>
+                         <div className="stats-grid">
                              <div style={{ padding: '20px', background: '#f8fafc', borderRadius: '8px' }}>
                                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>DETECTED INTENT</p>
                                  <p style={{ fontSize: '1.2rem', fontWeight: 600 }}>{scanResult.aiAnalysis.category}</p>
@@ -113,7 +113,7 @@ function App() {
                          </div>
 
                          <h3 style={{ fontSize: '0.9rem', marginBottom: '10px', marginTop: '30px', color: 'var(--text-secondary)' }}>DEEP ENDPOINT TELEMETRY</h3>
-                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '30px', fontSize: '0.85rem' }}>
+                         <div className="telemetry-grid">
                              <div style={{ padding: '15px', background: '#f1f5f9', borderRadius: '6px' }}>
                                  <p style={{ color: 'var(--text-secondary)', marginBottom: '4px' }}>Resolved IP Location</p>
                                  <p style={{ fontWeight: 600, fontFamily: 'var(--font-mono)' }}>{scanResult.telemetry.resolvedIp}</p>
@@ -124,7 +124,7 @@ function App() {
                                     {scanResult.telemetry.routing}
                                  </p>
                              </div>
-                             <div style={{ padding: '15px', background: '#f1f5f9', borderRadius: '6px', gridColumn: 'span 2' }}>
+                             <div className="full-span" style={{ padding: '15px', background: '#f1f5f9', borderRadius: '6px' }}>
                                  <p style={{ color: 'var(--text-secondary)', marginBottom: '4px' }}>Interface Identity</p>
                                  <p style={{ fontWeight: 600 }}>Host: {scanResult.telemetry.hostname} ({scanResult.telemetry.interfaceRisk})</p>
                              </div>

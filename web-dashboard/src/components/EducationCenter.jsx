@@ -139,10 +139,10 @@ const EducationCenter = () => {
   const [activeTab, setActiveTab] = useState(pages[0].id);
 
   return (
-    <div className="glass-panel" style={{ marginTop: '20px', minHeight: '600px', display: 'flex', gap: '30px' }}>
+    <div className="glass-panel wiki-layout">
       
       {/* Sidebar Navigation */}
-      <div style={{ width: '300px', borderRight: '1px solid var(--border-color)', paddingRight: '20px' }}>
+      <div className="wiki-sidebar">
         <h2 style={{ fontSize: '1.2rem', marginBottom: '20px' }}>Intelligence Wiki</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {pages.map((page) => (
