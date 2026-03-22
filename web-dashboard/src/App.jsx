@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import EducationCenter from './components/EducationCenter';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = '/api';
 
 function App() {
   const [targetUrl, setTargetUrl] = useState('');
